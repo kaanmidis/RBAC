@@ -1,0 +1,67 @@
+<h1>Kullanıcı ara: </h1> <input type="text" id="searchInput" placeholder="E-mail ile ara..." onkeyup="filterTable()"> 
+
+<h1>Kullanıcı Yönetimi</h1>
+
+<table border="1" cellpadding="6">
+  <tr>
+    <th>ID</th>
+    <th>E-mail</th>
+    <th>Rol</th>
+    <th>Durum</th>
+    <% if (user && 
+      (user.permissions.includes('USER_DISABLE') || 
+       user.permissions.includes('ROLE_ASSIGN'))) { %>
+      <th>İşlemler</th>
+    <% } %>
+  </tr>
+
+  <% users.forEach(u => { %>
+    <tr>
+      <td><%= u.id %></td>
+      <td><%= u.email %></td>
+      <td><%= u.role || 'Atanmamış' %></td>
+      <td><%= u.is_active ? 'Aktif' : 'Pasif' %></td>
+
+      <% if (user && 
+        (user.permissions.includes('USER_DISABLE') || 
+         user.permissions.includes('ROLE_ASSIGN'))) { %>
+
+        <td>
+          <% if (user.permissions.includes('USER_DISABLE')) { %>
+            <form 
+              action="/user/disable/<%= u.id %>" 
+              method="POST" 
+              style="display:inline;"
+            >
+              <button type="submit">
+                <%= u.is_active ? 'Pasif Et' : 'Aktif Et' %>
+              </button>
+            </form>
+          <% } %>
+
+          <% if (user.permissions.includes('ROLE_ASSIGN')) { %>
+            <a href="/user/role/<%= u.id %>">Rol Yönetimi</a>
+          <% } %>
+        </td>
+
+      <% } %>
+    </tr>
+  <% }) %>
+</table>
+
+<script>
+function filterTable() {
+  const input = document.getElementById('searchInput');
+  const filter = input.value.toLowerCase();
+  const table = document.querySelector('table');
+  const rows = table.getElementsByTagName('tr');
+
+  for (let i = 1; i < rows.length; i++) {
+    const emailCell = rows[i].getElementsByTagName('td')[1];
+    if (emailCell) {
+      const emailText = emailCell.textContent || emailCell.innerText;
+      rows[i].style.display = emailText.toLowerCase().includes(filter) ? '' : 'none';
+    }
+  }
+}
+</script>

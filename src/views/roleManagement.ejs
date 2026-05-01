@@ -1,0 +1,14 @@
+<h1>Rol Yönetimi hoşgeldiniz</h1>
+<p>Kullanıcı: <%= result.email %></p>
+<p>Mevcut Rol: <%= result.role %></p>
+<p>Hesabı aktif: <%= result.is_active ? 'Evet' : 'Hayır' %></p>
+
+<h1>Rol Değiştir</h1>
+<form action="/user/<%= result.id %>/change-role" method="POST">
+    <select name="role_name" required>
+        <% allRoles.forEach(role => { %>
+            <option value="<%= role.name %>" <%= role.name === result.role ? 'selected' : '' %>><%= role.name %></option>
+        <% }); %>
+    </select>
+    <button type="submit">Rolü Güncelle</button>
+</form>

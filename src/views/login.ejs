@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login</title>
+</head>
+<body>
+
+<h2>Giriş Yap</h2>
+
+<% if (error) { %>
+  <p style="color:red"><%= error %></p>
+<% } %>
+
+<form method="POST" action="/login">
+  <input type="email" name="email" placeholder="Email" required />
+  <br><br>
+  <input type="password" name="password" placeholder="Şifre" required />
+  <br><br>
+  <button type="submit">Giriş Yap</button>
+</form>
+
+</body>
+</html>

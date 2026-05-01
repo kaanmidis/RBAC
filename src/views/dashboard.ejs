@@ -1,0 +1,9 @@
+<h1>Dashboard - Welcome, <%= user.email %></h1>
+
+  <% if (user && user.permissions.includes('AUIDIT_VİEW')) { %>
+    <li><a href="/audit-logs">Audit Logs</a></li>
+  <% } %>
+  
+  <% if (user && user.permissions.includes('USER_VIEW')) { %>
+    <li><a href="/user">Kullanıcı Listesi</a></li>
+  <% } %>

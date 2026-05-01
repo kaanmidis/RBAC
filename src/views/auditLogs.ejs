@@ -1,0 +1,159 @@
+<h2>Audit Log Kayıtları</h2>
+
+<div class="filters">
+  <div class="filter-item">
+    <label>Kullanıcı</label>
+    <input type="text" id="filterInput" placeholder="Kullanıcıya göre..." onkeyup="filterLogs()">
+  </div>
+
+  <div class="filter-item">
+    <label>Hedef Kullanıcı</label>
+    <input type="text" id="targetFilterInput" placeholder="Hedef kullanıcı..." onkeyup="filterTargetLogs()">
+  </div>
+
+  <div class="filter-item">
+    <label>Aksiyon</label>
+    <select id="actionFilter" onchange="filterActionLogs()">
+      <option value="">Tümü</option>
+      <% const actions = [...new Set(logs.map(log => log.action))]; %>
+      <% actions.forEach(action => { %>
+        <option value="<%= action %>"><%= action %></option>
+      <% }) %>
+    </select>
+  </div>
+
+  <div class="filter-item">
+    <label>IP</label>
+    <input type="text" id="ipFilterInput" placeholder="IP adresi..." onkeyup="filterIPLogs()">
+  </div>
+
+  <div class="filter-item">
+    <label>Tarih</label>
+    <input type="date" id="dateFilterInput" onchange="filterDateLogs()">
+  </div>
+</div>
+
+<style>
+  .filters {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+
+.filter-item {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+}
+
+.filter-item input,
+.filter-item select {
+  padding: 6px;
+  min-width: 160px;
+}
+</style>
+
+<table border="1" cellpadding="6">
+  <tr>
+    <th>Tarih</th>
+    <th>Kullanıcı</th>
+    <th>Aksiyon</th>
+    <th>Modül</th>
+    <th>Hedef Kullanıcı</th>
+    <th>Açıklama</th>
+    <th>IP</th>
+  </tr>
+
+  <% logs.forEach(log => { %>
+    <tr>
+      <td><%= log.created_at %></td>
+      <td><%= log.actor_email || 'SYSTEM' %></td>
+      <td><%= log.action %></td>
+      <td><%= log.entity %></td>
+      <td>
+        <%= log.target_user_email || (log.entity === 'USER' ? log.target_user_email : '') || '' %>
+      </td>
+      <td><%= log.description %></td>
+      <td><%= log.ip_address %></td>
+    </tr>
+  <% }) %>
+</table>
+
+<script>
+function filterLogs() {
+  const input = document.getElementById('filterInput');
+  const filter = input.value.toLowerCase();
+  const table = document.querySelector('table');
+  const rows = table.getElementsByTagName('tr');
+
+  for (let i = 1; i < rows.length; i++) {
+    const userCell = rows[i].getElementsByTagName('td')[1];
+    if (userCell) {
+      const userText = userCell.textContent || userCell.innerText;
+      rows[i].style.display = userText.toLowerCase().indexOf(filter) > -1 ? '' : 'none';
+    }
+  }
+}
+
+function filterTargetLogs() {
+  const input = document.getElementById('targetFilterInput');
+  const filter = input.value.toLowerCase();
+  const table = document.querySelector('table');
+  const rows = table.getElementsByTagName('tr');
+
+  for (let i = 1; i < rows.length; i++) {
+    const targetUserCell = rows[i].getElementsByTagName('td')[4];
+    if (targetUserCell) {
+      const targetUserText = targetUserCell.textContent || targetUserCell.innerText;
+      rows[i].style.display = targetUserText.toLowerCase().indexOf(filter) > -1 ? '' : 'none';
+    }
+  }
+}
+
+function filterActionLogs() {
+  const select = document.getElementById('actionFilter');
+  const filter = select.value.toLowerCase();
+  const table = document.querySelector('table');
+  const rows = table.getElementsByTagName('tr');
+
+  for (let i = 1; i < rows.length; i++) {
+    const actionCell = rows[i].getElementsByTagName('td')[2];
+    if (actionCell) {
+      const actionText = actionCell.textContent || actionCell.innerText;
+      rows[i].style.display = filter === '' || actionText.toLowerCase() === filter ? '' : 'none';
+    }
+  }
+}
+
+function filterIPLogs() {
+  const input = document.getElementById('ipFilterInput');
+  const filter = input.value.toLowerCase();
+  const table = document.querySelector('table');
+  const rows = table.getElementsByTagName('tr');
+
+  for (let i = 1; i < rows.length; i++) {
+    const ipCell = rows[i].getElementsByTagName('td')[6];
+    if (ipCell) {
+      const ipText = ipCell.textContent || ipCell.innerText;
+      rows[i].style.display = ipText.toLowerCase().indexOf(filter) > -1 ? '' : 'none';
+    }
+  }
+} 
+
+function filterDateLogs() {
+  const input = document.getElementById('dateFilterInput');
+  const filter = input.value;
+  const table = document.querySelector('table');
+  const rows = table.getElementsByTagName('tr');
+  for (let i = 1; i < rows.length; i++) {
+    const dateCell = rows[i].getElementsByTagName('td')[0];
+    if (dateCell) {
+      const dateText = dateCell.textContent || dateCell.innerText;
+      const logDate = new Date(dateText);
+      const filterDate = new Date(filter);
+      rows[i].style.display = logDate.toDateString() === filterDate.toDateString() ? '' : 'none';
+    }
+  }
+}
+</script>
